@@ -31,7 +31,8 @@ class Robot : public frc::TimedRobot {
 
     // Run controller and update motor output
     m_motor.Set(
-        m_controller.Calculate(units::meter_t{m_encoder.GetDistance()}));
+        m_controller.Calculate(units::meter_t{m_encoder.GetDistance()}) +
+        feedforward.Calculate(controller.GetSetpoint().velocity));
   }
 
  private:
@@ -45,6 +46,8 @@ class Robot : public frc::TimedRobot {
                                                                   0.75_mps_sq};
   frc::ProfiledPIDController<units::meters> m_controller{1.3, 0.0, 0.7,
                                                          m_constraints, kDt};
+
+  frc::ElevatorFeedForward<units::meters> feedforward{0.268, 0.268, 1.89}
 };
 
 #ifndef RUNNING_FRC_TESTS

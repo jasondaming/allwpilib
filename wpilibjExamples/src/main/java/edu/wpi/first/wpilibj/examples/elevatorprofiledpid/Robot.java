@@ -4,6 +4,7 @@
 
 package edu.wpi.first.wpilibj.examples.elevatorprofiledpid;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,6 +19,8 @@ public class Robot extends TimedRobot {
   private final Joystick m_joystick = new Joystick(1);
   private final Encoder m_encoder = new Encoder(1, 2);
   private final MotorController m_motor = new PWMSparkMax(1);
+  // You will need to use SysID to calculate kS, kG, and kV for your elevator.
+  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.268, 0.268, 1.89);
 
   // Create a PID controller whose setpoint's change is subject to maximum
   // velocity and acceleration constraints.
@@ -40,6 +43,6 @@ public class Robot extends TimedRobot {
     }
 
     // Run controller and update motor output
-    m_motor.set(m_controller.calculate(m_encoder.getDistance()));
+    m_motor.set(m_controller.calculate(m_encoder.getDistance()) + feedforward.calculate(m_controller.getSetpoint().velocity));
   }
 }
